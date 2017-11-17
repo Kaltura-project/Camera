@@ -1,9 +1,7 @@
 package com.example.zhou.camera;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.hardware.Camera;
-import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +13,6 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -46,23 +43,6 @@ public class MainActivity extends Activity {
         }
         return object;
     }
-
-    private PictureCallback capturedIt = new PictureCallback() {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
-            Bitmap bitmap = BitmapFactory.decodeByteArray(data ,0, data .length);
-            if(bitmap==null){
-                Toast.makeText(getApplicationContext(), "not taken", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "taken", Toast.LENGTH_SHORT).show();
-            }
-            cameraObject.release();
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,8 +77,6 @@ public class MainActivity extends Activity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(ShowCamera);
 
-
-
     }
 
     public void ClickCapture(View view) {
@@ -110,21 +88,34 @@ public class MainActivity extends Activity {
         Uri VideoUri = Uri.fromFile(VideoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, VideoUri);
         startActivityForResult(intent, 0);
+
+        mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        mLocaationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,500,0,new LocationListener(){
+            @Override
+            public void onStatusChanged(String provider,int status, Bundle extras){
+            }
+
+            @Override
+            public void onProviderEnabled(String provider){
+                update(mLocaationManager.getLastKnownLocation(provider));
+            }
+
+            @Override
+            public void onProviderDisabled(String provider){
+            }
+
+            @Override
+            public void onLocationChanged(Location location){
+                update(location);
+            }
+        });
+        update(location);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    protected void onStop() {
-        super.onStop();
-        Button button2=(Button)findViewById(R.id.button_finish);
-        button2.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view){
-
-            }
-        });
     }
 
     private  void update(Location location){
@@ -146,7 +137,6 @@ public class MainActivity extends Activity {
             String filePath = "/data/";
             String fileName = "gps.csv";
             writeTxtToFile(sb.toString(),filePath,fileName);
-
 
         }
     }
@@ -194,10 +184,6 @@ public class MainActivity extends Activity {
         }catch (Exception e){
             Log.i("error:",e+"");
         }
-    }
-
-    public void snapIt(View view){
-        cameraObject.takePicture(null, null, capturedIt);
     }
 
     @Override
