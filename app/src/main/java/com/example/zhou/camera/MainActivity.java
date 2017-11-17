@@ -109,6 +109,7 @@ public class MainActivity extends Activity {
                 }
             });
             update(location);
+            pic = (ImageView)findViewById(R.id.imageView1);
             cameraObject = isCameraAvailiable();
             Camera.CameraInfo camObjInfo = new Camera.CameraInfo();
             cameraObject.setDisplayOrientation(getCorrectCameraOrientation(camObjInfo, cameraObject));
@@ -129,6 +130,7 @@ public class MainActivity extends Activity {
         Uri VideoUri = Uri.fromFile(VideoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, VideoUri);
         startActivityForResult(intent, 0);
+
 
         mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -166,13 +168,13 @@ public class MainActivity extends Activity {
             sb.append(location.getAccuracy());
             sb.append(",Speed:");
             sb.append(location.getSpeed());
-            sb.append(",Longtitude");
+            sb.append(",Longtitude:");
             sb.append(location.getLongitude());
-            sb.append(",Latitude");
+            sb.append(",Latitude:");
             sb.append(location.getLatitude());
-            sb.append(",Bearing");
+            sb.append(",Bearing:");
             sb.append(location.getBearing());
-            sb.append(",Time");
+            sb.append(",Time:");
             sb.append(location.getTime());
             sb.append("\n");
             tv.setText(sb.toString());
