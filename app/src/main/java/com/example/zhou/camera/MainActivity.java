@@ -157,22 +157,37 @@ public class MainActivity extends Activity {
     private  void update(Location location){
         if (location != null){
             StringBuilder sb = new StringBuilder();
+            sb.append("Accuracy:");
             sb.append(location.getAccuracy());
-            sb.append(",");
+            sb.append(",Speed:");
             sb.append(location.getSpeed());
-            sb.append(",");
+            sb.append(",Longtitude");
             sb.append(location.getLongitude());
-            sb.append(",");
+            sb.append(",Latitude");
             sb.append(location.getLatitude());
-            sb.append(",");
+            sb.append(",Bearing");
             sb.append(location.getBearing());
-            sb.append(",");
+            sb.append(",Time");
             sb.append(location.getTime());
             sb.append("\n");
             tv.setText(sb.toString());
+
             String filePath = "/data/";
             String fileName = "gps.csv";
-            writeTxtToFile(sb.toString(),filePath,fileName);
+            StringBuilder Savesb = new StringBuilder();
+            Savesb.append(location.getAccuracy());
+            Savesb.append(",");
+            Savesb.append(location.getSpeed());
+            Savesb.append(",");
+            Savesb.append(location.getLongitude());
+            Savesb.append(",");
+            Savesb.append(location.getLatitude());
+            Savesb.append(",");
+            Savesb.append(location.getBearing());
+            Savesb.append(",");
+            Savesb.append(location.getTime());
+            Savesb.append("\n");
+            writeTxtToFile(Savesb.toString(),filePath,fileName);
 
         }
     }
