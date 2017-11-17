@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Surface;
 import android.widget.Button;
 import android.content.Intent;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.hardware.Camera;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -108,6 +110,9 @@ public class MainActivity extends Activity {
             });
             update(location);
             cameraObject = isCameraAvailiable();
+            Camera.CameraInfo camObjInfo = new Camera.CameraInfo();
+            cameraObject.setDisplayOrientation(getCorrectCameraOrientation(camObjInfo, cameraObject));
+            cameraObject.getParameters().setRotation(getCorrectCameraOrientation(camObjInfo, cameraObject));
             ShowCamera = new ShowCamera(this, cameraObject);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(ShowCamera);
@@ -243,6 +248,39 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    public int getCorrectCameraOrientation(Camera.CameraInfo info, Camera camera) {
 
+        int rotation = this.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+
+        switch(rotation){
+            case Surface.ROTATION_0:
+                degrees = 270;
+                break;
+
+            case Surface.ROTATION_90:
+                degrees = 180;
+                break;
+
+            case Surface.ROTATION_180:
+                degrees = 90;
+                break;
+
+            case Surface.ROTATION_270:
+                degrees = 0;
+                break;
+
+        }
+
+        int result;
+        if(info.facing==Camera.CameraInfo.CAMERA_FACING_FRONT){
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;
+        }else{
+            result = (info.orientation - degrees + 360) % 360;
+        }
+
+        return result;
+    }
 
 }
