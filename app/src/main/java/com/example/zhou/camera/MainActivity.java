@@ -1,9 +1,13 @@
 package com.example.zhou.camera;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Button;
 import android.content.Intent;
@@ -27,6 +31,10 @@ import java.io.RandomAccessFile;
 
 public class MainActivity extends Activity {
 
+    private int MY_PERMISSIONS_REQUEST_CAMERA;
+    private int MY_PERMISSIONS_REQUEST_GPS;
+    private int MY_PERMISSIONS_REQUEST_AUDIO;
+
     private Camera cameraObject;
     public ShowCamera ShowCamera;
     private ImageView pic;
@@ -47,35 +55,63 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        pic = (ImageView) findViewById(R.id.imageView1);
-        tv = (TextView) findViewById(R.id.tv);
-        mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        mLocaationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,500,0,new LocationListener(){
-            @Override
-            public void onStatusChanged(String provider,int status, Bundle extras){
-            }
 
-            @Override
-            public void onProviderEnabled(String provider){
-                update(mLocaationManager.getLastKnownLocation(provider));
-            }
+        boolean cameraperms = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean locperms = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean micperms = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED;
+        if ((micperms) || (locperms)|| (cameraperms)) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_GPS);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    MY_PERMISSIONS_REQUEST_AUDIO);
+        }
+    }
 
-            @Override
-            public void onProviderDisabled(String provider){
-            }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (MY_PERMISSIONS_REQUEST_AUDIO==0 && MY_PERMISSIONS_REQUEST_CAMERA==0 && MY_PERMISSIONS_REQUEST_GPS==0){
+            setContentView(R.layout.activity_main);
+            pic = (ImageView) findViewById(R.id.imageView1);
+            tv = (TextView) findViewById(R.id.tv);
+            mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            mLocaationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,500,0,new LocationListener(){
+                @Override
+                public void onStatusChanged(String provider,int status, Bundle extras){
+                }
 
-            @Override
-            public void onLocationChanged(Location location){
-                update(location);
-            }
-        });
-        update(location);
-        cameraObject = isCameraAvailiable();
-        ShowCamera = new ShowCamera(this, cameraObject);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(ShowCamera);
+                @Override
+                public void onProviderEnabled(String provider){
+                    update(mLocaationManager.getLastKnownLocation(provider));
+                }
+
+                @Override
+                public void onProviderDisabled(String provider){
+                }
+
+                @Override
+                public void onLocationChanged(Location location){
+                    update(location);
+                }
+            });
+            update(location);
+            cameraObject = isCameraAvailiable();
+            ShowCamera = new ShowCamera(this, cameraObject);
+            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+            preview.addView(ShowCamera);
+        }
 
     }
 
