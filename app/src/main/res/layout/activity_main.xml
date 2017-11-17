@@ -13,7 +13,7 @@
         <FrameLayout
             android:id="@+id/camera_preview"
             android:layout_width="fill_parent"
-            android:layout_height="199dp" />
+            android:layout_height="480dp" />
 
         <Button
             android:id="@+id/button_capture"
@@ -34,12 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:scaleType="fitXY"
-            android:src="@mipmap/logo" />
 
 
     </LinearLayout>

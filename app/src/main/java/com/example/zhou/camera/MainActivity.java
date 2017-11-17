@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
                                            String permissions[], int[] grantResults) {
         if (MY_PERMISSIONS_REQUEST_AUDIO==0 && MY_PERMISSIONS_REQUEST_CAMERA==0 && MY_PERMISSIONS_REQUEST_GPS==0){
             setContentView(R.layout.activity_main);
-            pic = (ImageView) findViewById(R.id.imageView1);
+            //pic = (ImageView) findViewById(R.id.imageView1);
             tv = (TextView) findViewById(R.id.tv);
             mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
