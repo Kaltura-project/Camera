@@ -120,7 +120,23 @@ public class MainActivity extends Activity {
 
     }
 
+    static final int REQUEST_VIDEO_CAPTURE = 1;
+//
+//    private void dispatchTakeVideoIntent() {
+//        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+//        }
+//    }
+
     public void ClickCapture(View view) {
+
+//        System.out.println("button clicked before startActivityForResult");
+//        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+//        }
+
         Intent intent = new Intent();
         intent.setAction("android.media.action.VIDEO_CAPTURE");
         intent.addCategory("android.intent.catergory.DEFAULT");
@@ -128,7 +144,11 @@ public class MainActivity extends Activity {
         File VideoFile = new File("/data/video.mp4");
         Uri VideoUri = Uri.fromFile(VideoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, VideoUri);
-        startActivityForResult(intent, 0);
+
+//        startActivityForResult(intent, 0); // TODO: bug here
+        startActivityForResult(intent, 1); // TODO: bug here
+
+        System.out.println("button clicked after startActivityForResult");
 
         mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
