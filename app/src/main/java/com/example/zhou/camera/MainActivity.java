@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import java.io.IOException;
 import android.hardware.Camera;
 
 import android.location.Location;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import com.example.zhou.camera.R;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 
 public class MainActivity extends Activity {
@@ -85,7 +87,6 @@ public class MainActivity extends Activity {
                                            String permissions[], int[] grantResults) {
         if (MY_PERMISSIONS_REQUEST_AUDIO==0 && MY_PERMISSIONS_REQUEST_CAMERA==0 && MY_PERMISSIONS_REQUEST_GPS==0){
             setContentView(R.layout.activity_main);
-            //pic = (ImageView) findViewById(R.id.imageView1);
             tv = (TextView) findViewById(R.id.tv);
             mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -151,7 +152,23 @@ public class MainActivity extends Activity {
 
         System.out.println("button clicked after startActivityForResult");
 
-
+        String filePath = "/data/";
+        String fileName = "gps.csv";
+        String strFilePath = filePath+fileName;
+        File GpsFile = new File(getFilesDir(),strFilePath);
+        // Make sure log file is exists
+        if (!GpsFile.exists()) {
+            boolean result;
+            try {
+                result = GpsFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            if (!result) {
+                return;
+            }
+        }
         mLocaationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = mLocaationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         mLocaationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,500,0,new LocationListener(){
@@ -201,6 +218,7 @@ public class MainActivity extends Activity {
 
             String filePath = "/data/";
             String fileName = "gps.csv";
+            String strFilePath = filePath+fileName;
             StringBuilder Savesb = new StringBuilder();
             Savesb.append(location.getAccuracy());
             Savesb.append(",");
@@ -214,7 +232,15 @@ public class MainActivity extends Activity {
             Savesb.append(",");
             Savesb.append(location.getTime());
             Savesb.append("\n");
-            writeTxtToFile(Savesb.toString(),filePath,fileName);
+            //writeTxtToFile(Savesb.toString(),filePath,fileName);
+            FileOutputStream outputStream;
+            try {
+                outputStream = openFileOutput(strFilePath, Context.MODE_PRIVATE);
+                outputStream.write(Savesb.toString().getBytes());
+                outputStream.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }
     }
